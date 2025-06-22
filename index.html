@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>○×GAME</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>○✖ゲーム</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap');
+    
+    body {
+      font-family: 'Kosugi Maru', sans-serif;
+      background-color: #f0f9ff;
+      touch-action: manipulation;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    .cell {
+      transition: all 0.2s;
+    }
+    
+    .cell:hover:not(.marked) {
+      background-color: #e0f2fe;
+      transform: scale(1.05);
+    }
+    
+    .win-animation {
+      animation: winPulse 1s infinite;
+    }
+    
+    @keyframes winPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      opacity: 0;
+    }
+    
+    .bg-shape {
+      position: absolute;
+      z-index: -1;
+      opacity: 0.6;
+    }
+    
+    .star {
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    }
+    
+    .cloud {
+      border-radius: 50%;
+      box-shadow: 
+        30px 10px 0 0 currentColor,
+        60px 0 0 0 currentColor;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0); }
+      50% { transform: translateY(-15px) rotate(5deg); }
+      100% { transform: translateY(0) rotate(0); }
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+  <!-- かわいい背景の装飾 -->
+  <div class="bg-shape star w-16 h-16 bg-yellow-300 top-10 left-10" style="animation: float 6s ease-in-out infinite;"></div>
+  <div class="bg-shape star w-12 h-12 bg-pink-300 bottom-20 right-10" style="animation: float 7s ease-in-out infinite 1s;"></div>
+  <div class="bg-shape star w-8 h-8 bg-purple-300 top-20 right-20" style="animation: float 5s ease-in-out infinite 0.5s;"></div>
+  
+  <div class="bg-shape w-20 h-20 rounded-full bg-blue-200 top-40 left-5" style="animation: bounce 8s ease-in-out infinite;"></div>
+  <div class="bg-shape w-16 h-16 rounded-full bg-green-200 bottom-10 left-20" style="animation: bounce 7s ease-in-out infinite 1.5s;"></div>
+  <div class="bg-shape w-12 h-12 rounded-full bg-red-200 top-5 right-40" style="animation: bounce 9s ease-in-out infinite 1s;"></div>
+  
+  <div class="bg-shape cloud w-20 h-20 bg-transparent text-blue-100 top-60 right-5" style="animation: float 15s linear infinite;"></div>
+  <div class="bg-shape cloud w-16 h-16 bg-transparent text-pink-100 bottom-40 left-10" style="animation: float 18s linear infinite 2s;"></div>
+  
+  <div class="bg-shape w-24 h-24 bg-yellow-100 top-1/3 left-1/4 rounded-lg" style="animation: spin 20s linear infinite; opacity: 0.4;"></div>
+  <div class="bg-shape w-32 h-32 bg-blue-100 bottom-1/4 right-1/3 rounded-lg" style="animation: spin 25s linear infinite reverse; opacity: 0.3;"></div>
+  
+  <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-6 relative overflow-hidden">
+    <div class="absolute -top-10 -left-10 w-40 h-40 bg-blue-200 rounded-full opacity-50"></div>
+    <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-green-200 rounded-full opacity-50"></div>
+    
+    <div class="relative z-10">
+      <h1 class="text-3xl font-bold text-center mb-2 text-blue-600">○✖ゲーム</h1>
+      <p id="status" class="text-xl text-center mb-4 font-bold text-gray-700">○のばんです！</p>
+      
+      <div id="board" class="grid grid-cols-3 gap-3 mb-6">
+        <div class="cell aspect-square bg-blue-100 rounded-xl flex items-center justify-center text-5xl font-bold cursor-pointer shadow-md"></div>
+        <div class="cell aspect-square bg-blue-100 rounded-xl flex items-center justify-center text-5xl font-bold cursor-pointer shadow-md"></div>
+        <div class="cell aspect-square bg-blue-100 rounded-xl flex items-center justify-center text-5xl font-bold cursor-pointer shadow-md"></div>
+        <div class="cell aspect-square bg-blue-100 rounded-xl flex items-center justify-center text-5xl font-bold cursor-pointer shadow-md"></div>
+        <div class="cell aspect-square bg-blue-100 rounded-xl flex items-center justify-center text-5xl font-bold cursor-pointer shadow-md"></div>
+        <div class="cell aspect-square bg-blue-100 rounded-xl flex items-center justify-center text-5xl font-bold cursor-pointer shadow-md"></div>
+        <div class="cell aspect-square bg-blue-100 rounded-xl flex items-center justify-center text-5xl font-bold cursor-pointer shadow-md"></div>
+        <div class="cell aspect-square bg-blue-100 rounded-xl flex items-center justify-center text-5xl font-bold cursor-pointer shadow-md"></div>
+        <div class="cell aspect-square bg-blue-100 rounded-xl flex items-center justify-center text-5xl font-bold cursor-pointer shadow-md"></div>
+      </div>
+      
+      <div class="flex justify-center">
+        <button id="restart" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full text-lg shadow-lg transition transform hover:scale-105 active:scale-95">
+          もういちど あそぶ
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const cells = document.querySelectorAll('.cell');
+      const statusText = document.getElementById('status');
+      const restartBtn = document.getElementById('restart');
+      let currentPlayer = '○';
+      let gameActive = true;
+      let gameState = ['', '', '', '', '', '', '', '', ''];
+      
+      const winningConditions = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+        [0, 4, 8], [2, 4, 6]             // diagonals
+      ];
+      
+      // Set cell colors
+      const oColor = '#3b82f6'; // blue-500
+      const xColor = '#ef4444'; // red-500
+      
+      function handleCellClick(clickedCellEvent) {
+        const clickedCell = clickedCellEvent.target;
+        const clickedCellIndex = parseInt(
+          Array.from(cells).indexOf(clickedCell)
+        );
+        
+        if (gameState[clickedCellIndex] !== '' || !gameActive) {
+          return;
+        }
+        
+        gameState[clickedCellIndex] = currentPlayer;
+        clickedCell.textContent = currentPlayer;
+        clickedCell.classList.add('marked');
+        
+        // Set color based on player
+        if (currentPlayer === '○') {
+          clickedCell.style.color = oColor;
+        } else {
+          clickedCell.style.color = xColor;
+        }
+        
+        // Add pop animation
+        clickedCell.classList.add('transform', 'scale-110');
+        setTimeout(() => {
+          clickedCell.classList.remove('transform', 'scale-110');
+        }, 200);
+        
+        handleResultValidation();
+      }
+      
+      function handleResultValidation() {
+        let roundWon = false;
+        let winningLine = null;
+        
+        for (let i = 0; i < winningConditions.length; i++) {
+          const [a, b, c] = winningConditions[i];
+          const condition = gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c];
+          
+          if (condition) {
+            roundWon = true;
+            winningLine = [a, b, c];
+            break;
+          }
+        }
+        
+        if (roundWon) {
+          statusText.textContent = `${currentPlayer}のかち！`;
+          gameActive = false;
+          
+          // Highlight winning cells
+          winningLine.forEach(index => {
+            cells[index].classList.add('win-animation');
+            cells[index].style.backgroundColor = currentPlayer === '○' ? '#93c5fd' : '#fca5a5';
+          });
+          
+          createConfetti();
+          return;
+        }
+        
+        const roundDraw = !gameState.includes('');
+        if (roundDraw) {
+          statusText.textContent = 'ひきわけ！';
+          gameActive = false;
+          return;
+        }
+        
+        currentPlayer = currentPlayer === '○' ? '✖' : '○';
+        statusText.textContent = `${currentPlayer}のばんです！`;
+      }
+      
+      function restartGame() {
+        gameActive = true;
+        currentPlayer = '○';
+        gameState = ['', '', '', '', '', '', '', '', ''];
+        statusText.textContent = `${currentPlayer}のばんです！`;
+        
+        cells.forEach(cell => {
+          cell.textContent = '';
+          cell.classList.remove('marked', 'win-animation');
+          cell.style.backgroundColor = '';
+        });
+        
+        // Clear any confetti
+        document.querySelectorAll('.confetti').forEach(el => el.remove());
+      }
+      
+      function createConfetti() {
+        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+        
+        for (let i = 0; i < 50; i++) {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.top = '-10px';
+          confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+          
+          document.body.appendChild(confetti);
+          
+          // Animate confetti
+          const animation = confetti.animate([
+            { top: '-10px', opacity: 1 },
+            { top: '100vh', opacity: 0 }
+          ], {
+            duration: 1500 + Math.random() * 2000,
+            easing: 'cubic-bezier(0,0,0.2,1)'
+          });
+          
+          animation.onfinish = () => confetti.remove();
+        }
+      }
+      
+      // Event listeners
+      cells.forEach(cell => {
+        cell.addEventListener('click', handleCellClick);
+      });
+      
+      restartBtn.addEventListener('click', restartGame);
+    });
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'953adb626065e38d',t:'MTc1MDU4NTk4OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
